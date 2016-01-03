@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>SSE Testing</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <h1>SSE Testing</h1>
+    <ul id="eventList"></ul>
+    <script src="EventSourcePolyfill.js"></script>
+    <script>
+        var eventList = document.getElementById("eventList");
+
+        var evtSource = new EventSource("/serverTime");
+
+        evtSource.addEventListener("serverTime", function (e) {
+            var newElement = document.createElement("li");
+            newElement.innerHTML = "ping at " + e.data;
+            eventList.appendChild(newElement);
+        }, false);
+
+        evtSource.addEventListener('open', function (e) {
+            var newElement = document.createElement("li");
+            newElement.innerHTML = "connection opened";
+            eventList.appendChild(newElement);
+        }, false);
+
+        evtSource.addEventListener('error', function (e) {
+            if (evtSource.readyState == EventSource.CLOSED) {
+                var newElement = document.createElement("li");
+                newElement.innerHTML = "connection closed";
+                eventList.appendChild(newElement);
+            } else {
+                var newElement = document.createElement("li");
+                newElement.innerHTML = "connection error: " + evtSource.readyState;
+                eventList.appendChild(newElement);
+            }
+        }, false);
+    </script>
+</body>
+</html>
